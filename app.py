@@ -18,6 +18,10 @@ import re
 
 
 def run(data):
+    if not isinstance(data, dict):
+        raise ValueError("A entrada deve ser um objeto JSON.")
+    if not isinstance(data["blocos"], list) or any(not isinstance(item, dict) for item in data["blocos"]):
+        raise ValueError("O campo blocos deve ser uma lista de objetos.")
     ritmo = inteiro(data["palavras_por_minuto"], 1)
     limite = inteiro(data["limite_minutos"], 1) * 60
     agenda = []
@@ -54,3 +58,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
