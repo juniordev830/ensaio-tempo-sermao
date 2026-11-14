@@ -1,0 +1,16 @@
+{
+  "limite_minutos": 1,
+  "palavras_por_minuto": 120,
+  "blocos": [
+    {
+      "nome": "Introdução",
+      "texto": "Vamos ler o texto e observar a imagem da videira.",
+      "pausa_segundos": 10
+    },
+    {
+      "nome": "Conclusão",
+      "texto": "Vamos orar e aplicar o texto em casa.",
+      "pausa_segundos": 15
+    }
+  ]
+}
