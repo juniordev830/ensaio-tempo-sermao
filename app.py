@@ -13,8 +13,8 @@ def inteiro(value, minimo=0):
     return value
 
 
-from math import ceil
 import re
+from unicodedata import normalize
 
 
 def run(data):
@@ -26,8 +26,10 @@ def run(data):
     limite = inteiro(data["limite_minutos"], 1) * 60
     agenda = []
     for item in data["blocos"]:
-        palavras = len(re.findall(r"[^\W_]+(?:[-’'][^\W_]+)*", texto(item["texto"])))
-        segundos = ceil(palavras * 60 / ritmo) + inteiro(item.get("pausa_segundos", 0))
+        trecho = normalize("NFC", texto(item["texto"]))
+        palavras = len(re.findall(r"[^\W_]+(?:[-’'][^\W_]+)*", trecho))
+        segundos_fala = (palavras * 60 + ritmo - 1) // ritmo
+        segundos = segundos_fala + inteiro(item.get("pausa_segundos", 0))
         agenda.append({"nome": texto(item["nome"]), "palavras": palavras, "segundos": segundos})
     total = sum(item["segundos"] for item in agenda)
     return {"blocos": agenda, "duracao_total_segundos": total,
