@@ -31,3 +31,7 @@ python app.py exemplo.json | perl capitulos.pl > ensaio.vtt
 
 Use o arquivo como faixa de capítulos em um player compatível. Os tempos seguem
 a estimativa do roteiro e podem diferir da gravação real.
+
+## Exportação para planilha
+
+Use `python app.py exemplo.json --csv > relatorio.csv` para exportar os tempos de cada bloco do ensaio. O CSV usa ponto e vírgula, conserva a ordem do relatório e inclui o cabeçalho mesmo quando a seleção está vazia. O JSON continua sendo a saída padrão.
