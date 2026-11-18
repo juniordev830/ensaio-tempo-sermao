@@ -1,9 +1,19 @@
 'Estime a duração de cada bloco e descubra quanto precisa ajustar para caber no horário.'
 
+import argparse
+import json
+import re
+from pathlib import Path
+from unicodedata import normalize
+
+PALAVRA = re.compile(r"[^\W_]+(?:[-‐‑’'][^\W_]+)*")
+
 
 def texto(value):
     if not isinstance(value, str) or not value.strip():
         raise ValueError("Use texto não vazio.")
+    if re.search(r"[\ud800-\udfff]", value):
+        raise ValueError("O texto contém um caractere Unicode incompleto.")
     return value.strip()
 
 
@@ -11,10 +21,6 @@ def inteiro(value, minimo=0):
     if type(value) is not int or value < minimo:
         raise ValueError(f"Use um número inteiro a partir de {minimo}.")
     return value
-
-
-import re
-from unicodedata import normalize
 
 
 def run(data):
@@ -27,18 +33,13 @@ def run(data):
     agenda = []
     for item in data["blocos"]:
         trecho = normalize("NFC", texto(item["texto"]))
-        palavras = len(re.findall(r"[^\W_]+(?:[-’'][^\W_]+)*", trecho))
+        palavras = len(PALAVRA.findall(trecho))
         segundos_fala = (palavras * 60 + ritmo - 1) // ritmo
         segundos = segundos_fala + inteiro(item.get("pausa_segundos", 0))
         agenda.append({"nome": texto(item["nome"]), "palavras": palavras, "segundos": segundos})
     total = sum(item["segundos"] for item in agenda)
     return {"blocos": agenda, "duracao_total_segundos": total,
             "folga_segundos": max(0, limite - total), "excesso_segundos": max(0, total - limite)}
-
-
-import argparse
-import json
-from pathlib import Path
 
 
 def objeto_sem_campos_repetidos(pares):

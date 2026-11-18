@@ -23,6 +23,16 @@ class ProjetoTest(unittest.TestCase):
         self.assertEqual(result["blocos"][0]["palavras"], 2)
         self.assertEqual(result["duracao_total_segundos"], 2)
 
+    def test_hifens_tipograficos_mantem_palavras_compostas(self):
+        data = {
+            "blocos": [{"nome": "Abertura", "texto": "bem‐aventurado guarda‑chuva D’Ávila"}],
+            "palavras_por_minuto": 60,
+            "limite_minutos": 1,
+        }
+        result = run(data)
+        self.assertEqual(result["blocos"][0]["palavras"], 3)
+        self.assertEqual(result["duracao_total_segundos"], 3)
+
     def test_arredondamento_inteiro_preserva_um_segundo(self):
         result = run({
             "blocos": [{"nome": "Abertura", "texto": "Introdução", "pausa_segundos": 2}],
