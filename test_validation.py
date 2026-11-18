@@ -33,6 +33,20 @@ class InputValidationTest(unittest.TestCase):
         self.assertEqual(result.stdout, "")
         self.assertNotIn("Traceback", result.stderr)
 
+    def test_cli_rejects_unpaired_unicode_surrogate(self):
+        self.data["blocos"][0]["nome"] = "\ud800"
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "invalid.json"
+            path.write_text(json.dumps(self.data), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, str(ROOT / "app.py"), str(path)],
+                capture_output=True, text=True,
+            )
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(result.stdout, "")
+        self.assertIn("Unicode", result.stderr)
+        self.assertNotIn("Traceback", result.stderr)
+
     def test_missing_file_cli(self):
         with tempfile.TemporaryDirectory() as tmp:
             result = subprocess.run([sys.executable, str(ROOT / "app.py"), str(Path(tmp) / "missing.json")], capture_output=True, text=True)
